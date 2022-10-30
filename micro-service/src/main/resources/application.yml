@@ -1,0 +1,7 @@
+event:
+  starter:
+    enabled: true
+    listener:
+      enabled-events:
+        - kafka-stream
+

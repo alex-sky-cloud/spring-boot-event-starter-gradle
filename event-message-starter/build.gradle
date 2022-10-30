@@ -1,0 +1,63 @@
+plugins {
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id 'java'
+}
+
+group = 'com.event'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    annotationProcessor 'org.springframework.boot:spring-boot-autoconfigure-processor'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:2.7.5")
+    }
+}
+
+/*Если вы используете файл additional-spring-configuration-metadata.json ,
+задача compileJava  должна быть настроена так, чтобы она зависела от processResources*/
+tasks.named('compileJava') {
+    inputs.files(tasks.named('processResources'))
+}
+
+/*compileJava - компиляция Java
+
+    Depends on :
+
+      Все задачи, которые вносят вклад в путь к классам компиляции,
+    включая jar-задачи из проектов, которые находятся в пути к классам
+    через зависимости проекта
+
+processResources:
+    - Компилирует производственные исходные файлы Java с помощью компилятора JDK.
+*/
+compileJava.dependsOn(processResources)
+
+compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
